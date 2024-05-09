@@ -1,5 +1,6 @@
 import yfinance as yf
 import statistics
+import numpy as np
 
 
 def fetch_stock_data(ticker, period='1mo'):
@@ -15,7 +16,7 @@ def add_moving_average(data, window_size=5):
 
 def calculate_and_display_average_price(data):
     """Выводит среднюю цену закрытия акций за заданный период"""
-    print(f'Средняя цена закрытия акций за заданный период: {statistics.mean(data['Close'])}')
+    print(f'Средняя цена закрытия акции за заданный период: {statistics.mean(data['Close'])}')
 
 
 def notify_if_strong_fluctuations(data, threshold):
@@ -36,7 +37,7 @@ def notify_if_strong_fluctuations(data, threshold):
             except IndexError:
                 pass
     else:
-        print('Введённый порог колебания вне диапазона 0-100%')
+        print('Введённый порог колебаний вне диапазона 0-100%')
 
 
 def export_data_to_csv(data, filename):
@@ -45,4 +46,23 @@ def export_data_to_csv(data, filename):
         data.to_csv(f'{filename}.csv', encoding='utf-8')
         print(f'Файл {filename}.csv успешно сохранён')
     else:
-        print('Вы оставили поле пустым. Файл не был сохранён')
+        print('Вы оставили поле пустым. Файл *.csv не был сохранён')
+
+
+def rsi(data, period_rsi):
+    """Рассчитывает RSI и добавляет RSI в DataFrame"""
+    def rma(x, n, y0):
+        a = (n - 1) / n
+        ak = a ** np.arange(len(x) - 1, -1, -1)
+        return np.r_[np.full(n, np.nan), y0, np.cumsum(ak * x) / ak / n + y0 * a ** np.arange(1, len(x) + 1)]
+
+    data['change'] = data['Close'].diff()
+    data['gain'] = data.change.mask(data.change < 0, 0.0)
+    data['loss'] = -data.change.mask(data.change > 0, -0.0)
+    data['avg_gain'] = rma(data.gain[period_rsi + 1:].to_numpy(), period_rsi,
+                           np.nansum(data.gain.to_numpy()[:period_rsi + 1]) / period_rsi)
+    data['avg_loss'] = rma(data.loss[period_rsi + 1:].to_numpy(), period_rsi,
+                           np.nansum(data.loss.to_numpy()[:period_rsi + 1]) / period_rsi)
+    data['rs'] = data.avg_gain / data.avg_loss
+    data['rsi'] = 100 - (100 / (1 + data.rs))
+    return data

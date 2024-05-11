@@ -13,11 +13,14 @@ def main():
     ticker = input("Введите тикер акции (например, «AAPL» для Apple Inc): ")
     period = input("Введите период для данных (например, '1mo' для одного месяца): ")
     threshold = float(input("Введите порог колебания(%) от 0 до 100: "))
-    filename = input("Если нужно сохранить данные в файл *.csv, то введите имя для файла. Если сохранять не нужно - оставьте поле пустым: ")
+    filename = input("Если нужно сохранить данные в файл *.csv, то введите имя для файла. Если сохранять не нужно - "
+                     "оставьте поле пустым: ")
     period_rsi = int(input("Введите период(целое число) для RSI, например 14: "))
+    start_date = input('Введите начальную дату периода в формате "YYYY-MM-DD": ')
+    end_date = input('Введите конечную дату периода в формате "YYYY-MM-DD": ')
 
     # Получает данные об акции
-    stock_data = dd.fetch_stock_data(ticker, period)
+    stock_data = dd.fetch_stock_data(ticker, period, start_date, end_date)
 
     # Добавляет скользящее среднее в DataFrame
     stock_data = dd.add_moving_average(stock_data)
@@ -42,4 +45,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f'Error: {e}')

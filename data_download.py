@@ -3,9 +3,9 @@ import statistics
 import numpy as np
 
 
-def fetch_stock_data(ticker, period='1mo'):
+def fetch_stock_data(ticker, period='1mo', data_start=None, data_end=None):
     stock = yf.Ticker(ticker)
-    data = stock.history(period=period)
+    data = stock.history(period=period, start=data_start, end=data_end)
     return data
 
 

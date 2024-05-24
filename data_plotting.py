@@ -59,3 +59,31 @@ def create_and_save_plot_rsi(data, ticker, period, filename=None):
 
     plt.savefig(filename)
     print(f"График сохранен как {filename}")
+
+
+def create_and_save_plot_standard_deviation(data, ticker, period, filename=None):
+    plt.figure(figsize=(10, 6))
+
+    if 'Date' not in data:
+        if pd.api.types.is_datetime64_any_dtype(data.index):
+            dates = data.index.to_numpy()
+            plt.plot(dates, data['Std_Deviation'].values, label='Стандартное отклонение')
+        else:
+            print("Информация о дате отсутствует или не имеет распознаваемого формата.")
+            return
+    else:
+        if not pd.api.types.is_datetime64_any_dtype(data['Date']):
+            data['Date'] = pd.to_datetime(data['Date'])
+        plt.plot(data['Date'], data['Std_Deviation'], label='Стандартное отклонение')
+
+    plt.title(f"{ticker}  акции с течением времени")
+    plt.xlabel("Дата")
+    plt.ylabel("Стандартное отклонение")
+    plt.legend()
+    plt.show()
+
+    if filename is None:
+        filename = f"{ticker}_{period}_standard_deviation.png"
+
+    plt.savefig(filename)
+    print(f"График сохранен как {filename}")

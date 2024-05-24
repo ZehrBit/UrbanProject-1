@@ -51,6 +51,7 @@ def export_data_to_csv(data, filename):
 
 def rsi(data, period_rsi):
     """Рассчитывает RSI и добавляет RSI в DataFrame"""
+
     def rma(x, n, y0):
         a = (n - 1) / n
         ak = a ** np.arange(len(x) - 1, -1, -1)
@@ -65,4 +66,10 @@ def rsi(data, period_rsi):
                            np.nansum(data.loss.to_numpy()[:period_rsi + 1]) / period_rsi)
     data['rs'] = data.avg_gain / data.avg_loss
     data['rsi'] = 100 - (100 / (1 + data.rs))
+    return data
+
+
+def add_standard_deviation(data, window_size=5):
+    """Добавляет стандартное отклонение цены закрытия в DataFrame"""
+    data['Std_Deviation'] = data['Close'].rolling(window=window_size).std()
     return data

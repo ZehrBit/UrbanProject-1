@@ -45,11 +45,17 @@ def main():
     # Рассчитывает RSI и добавляет RSI в DataFrame
     stock_data = dd.rsi(stock_data, period_rsi)
 
+    # Добавляет стандартное отклонение цены закрытия в DataFrame
+    stock_data = dd.add_standard_deviation(stock_data)
+
     # Создание графика с ценами
     dplt.create_and_save_plot(stock_data, ticker, period, style)
 
     # Создание графика RSI
     dplt.create_and_save_plot_rsi(stock_data, ticker, period)
+
+    # Создаёт график стандартного отклонения
+    dplt.create_and_save_plot_standard_deviation(stock_data, ticker, period)
 
 
 if __name__ == "__main__":

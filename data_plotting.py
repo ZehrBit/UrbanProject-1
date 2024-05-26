@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+from bokeh.palettes import tol
+from bokeh.plotting import figure, show
 
 
 def create_and_save_plot(data, ticker, period, style, filename=None):
@@ -87,3 +89,15 @@ def create_and_save_plot_standard_deviation(data, ticker, period, filename=None)
 
     plt.savefig(filename)
     print(f"График сохранен как {filename}")
+
+
+def bokeh_show(data, ticker):
+    """Создаёт интерактивный график"""
+    p = figure(title=f"Индикаторы {ticker}",
+               background_fill_color="#fafafa", x_axis_type="datetime")
+    dates = data.index.to_numpy()
+    p.line(dates, data['rsi'], legend_label="RSI", color='red')
+    p.line(dates, data['Std_Deviation'], legend_label="Стандартное отклонение", color='blue')
+    p.legend.location = "top_left"
+
+    show(p)

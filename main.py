@@ -57,6 +57,9 @@ def main():
     # Создаёт график стандартного отклонения
     dplt.create_and_save_plot_standard_deviation(stock_data, ticker, period)
 
+    # Создаёт интерактивный график
+    dplt.bokeh_show(stock_data, ticker)
+
 
 if __name__ == "__main__":
     try:
